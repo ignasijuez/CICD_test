@@ -51,7 +51,7 @@ jobs:
     - name: Build
       run: |
         echo 'Clean and package the application'
-        mvn clean package
+        mvn clean package -Dspring.datasource.url=jdbc:mysql://localhost/petclinic
 
     - name: Test
       run: mvn test
