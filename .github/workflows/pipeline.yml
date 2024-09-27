@@ -39,6 +39,8 @@ jobs:
         #run: |
         #echo 'Testing MySQL connection...'
         #docker exec mysql_db mysqladmin ping -h mysql_db
+    - name: Check db
+      run: docker ps
 
     - name: Build
       run: |
