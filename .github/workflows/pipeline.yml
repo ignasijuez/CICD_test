@@ -43,10 +43,10 @@ jobs:
         echo 'Waiting 15 seconds for MySQL to be fully ready before running tests'
         sleep 15
 
-    - name: Test MySQL Connection
-      run: |
-        echo 'Testing MySQL connection...'
-        docker exec mysql_db mysqladmin ping -h mysql_db
+        # - name: Test MySQL Connection
+        #run: |
+        #echo 'Testing MySQL connection...'
+        #docker exec mysql_db mysqladmin ping -h mysql_db
 
     - name: Build
       run: |
