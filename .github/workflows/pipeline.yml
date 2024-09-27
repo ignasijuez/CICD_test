@@ -65,8 +65,3 @@ jobs:
 
     - name: Check containers
       run: docker ps
-  
-      
-
-
-
