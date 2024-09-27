@@ -1,81 +1,72 @@
-name: CI Pipeline
+# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
 
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Pipeline
+
+#events
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
+    #when someone pushes to branch main it triggers this workflow
   pull_request:
-    branches:
-      - main
+    branches: [ "main" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    - name: Checkout
+    - uses: actions/checkout@v4 #predefined action from the marketplace
+    
+    - name: Set up JDK 17 & Maven
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+    
+    - name: Check files
+      run: ls -la
 
-      - name: Set up JDK 22
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'zulu'
-          java-version: '22'
+    - name: Start MySQL
+      run: |
+        docker ps
+        docker compose down
+        echo 'Starting MySQL with Docker Compose...'
+        docker compose up mysql -d
+        echo 'Waiting 15 seconds for MySQL to be fully ready before running tests'
+        sleep 15
 
-      - name: Set up Maven
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'zulu'
-          java-version: '22'
-          cache: 'maven'
+    - name: Test MySQL Connection
+      run: |
+        echo 'Testing MySQL connection...'
+        docker exec mysql_db mysqladmin ping -h mysql_db
 
-      - name: List files after checkout
-        run: ls -la
+    - name: Build
+      run: |
+        echo 'Clean and package the application'
+        mvn clean package
 
-      - name: Start MySQL with Docker Compose
-        run: |
-          docker ps
-          docker compose down
-          echo 'Starting MySQL with Docker Compose...'
-          docker compose up -d mysql
-          echo 'Waiting 15 seconds for MySQL to be fully ready before running tests'
-          sleep 15
+    - name: Test
+      run: mvn test
 
-      - name: Test MySQL connection
-        run: |
-          echo 'Testing MySQL connection...'
-          docker exec mysql_db mysqladmin ping -h mysql_db
+    - name: Deploy
+      run: |
+        echo 'Starting App with Docker Compose...'
+        docker compose up --build -d
+        echo 'Waiting for the application to start...'
+        sleep 10
 
-      - name: Build and package the application
-        run: |
-          echo 'Clean and package the application'
-          mvn clean package
+    - name: Check containers
+      run: docker ps
+  
+      
 
-      - name: Run unit tests
-        run: mvn test
 
-      - name: Deploy the application with Docker Compose
-        run: |
-          echo 'Starting App with Docker Compose...'
-          docker compose up --build -d
-          echo 'Waiting for the application to start...'
-          sleep 10
 
-      - name: Check running containers
-        run: docker ps
-
-    # Post cleanup section
-    post:
-      always:
-        - name: Clean up Docker containers
-          run: docker compose down
-        - name: Pipeline completed
-          run: echo "Pipeline completed."
-
-      success:
-        - name: Success
-          run: echo "Pipeline succeeded."
-
-      failure:
-        - name: Failure
-          run: echo "Pipeline failed."
