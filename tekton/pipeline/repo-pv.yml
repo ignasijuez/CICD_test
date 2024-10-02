@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: repo-pv
+spec:
+  capacity:
+    storage: 1Gi  # Adjust based on your needs
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: standard
+  hostPath:
+    path: "/usr/project/repo"  # Absolute path for the repository storage in Minikube or Kubernetes node

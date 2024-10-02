@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: petclinic-app
+spec:
+  selector:
+    matchLabels:
+      app: petclinic-app
+  template:
+    metadata:
+      labels:
+        app: petclinic-app
+    spec:
+      containers:
+        - name: petclinic-app
+          image: app:copy2  # Replace with your actual image or build setup
+          ports:
+            - containerPort: 8080
+          env:
+            - name: MYSQL_URL
+              value: "jdbc:mysql://mysql:3306/petclinic"
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "petclinic"
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: "petclinic"

@@ -1,0 +1,35 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: ci-pipeline
+spec:
+  workspaces:
+    - name: shared-workspace
+  tasks:
+    - name: checkout
+      taskRef:
+        name: checkout-repo
+      workspaces:
+        - name: shared-workspace
+          workspace: shared-workspace
+    - name: start-mysql
+      taskRef:
+        name: start-mysql
+    - name: test-mysql-connection
+      taskRef:
+        name: test-mysql-connection
+    - name: build
+      taskRef:
+        name: build-maven
+      workspaces:
+        - name: shared-workspace
+          workspace: shared-workspace
+    - name: test
+      taskRef:
+        name: test-maven
+      workspaces:
+        - name: shared-workspace
+          workspace: shared-workspace
+    - name: deploy
+      taskRef:
+        name: deploy-app

@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:8.4
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: ""
+            - name: MYSQL_ALLOW_EMPTY_PASSWORD
+              value: "true"
+            - name: MYSQL_USER
+              value: "petclinic"
+            - name: MYSQL_PASSWORD
+              value: "petclinic"
+            - name: MYSQL_DATABASE
+              value: "petclinic"
+          volumeMounts:
+            - name: mysql-initdb
+              mountPath: /src/main/resources/db/mysql
+            - name: mysql-data
+              mountPath: /docker-entrypoint-initdb.d  # This is the directory inside the container for init scripts
+              subPath: src/main/resources/db/mysql  # This is where the init scripts are located in your repo
+      volumes:
+        - name: mysql-initdb
+          persistentVolumeClaim:
+            claimName: repo-pvc
+        - name: mysql-data
+          persistentVolumeClaim:
+            claimName: mysql-data-pvc
+
+
+
+
+
+
