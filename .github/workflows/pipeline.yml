@@ -1,47 +1,48 @@
-# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
-
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
 name: Pipeline
 
 #events
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "cicdtest" ]
     #when someone pushes to branch main it triggers this workflow
   pull_request:
     branches: [ "main" ]
 
 jobs:
-  build:
+  setup:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout
       uses: actions/checkout@v4 #predefined action from the marketplace
-    
+
     - name: Set up JDK 17 & Maven
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@v3
       with:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
-    
+
     - name: Check files
       run: ls -la
 
     - name: Start MySQL
       run: |
         docker ps
-        docker compose down
+        #docker compose down
         echo 'Starting MySQL with Docker Compose...'
-        docker compose up mysql -d
-        echo 'Waiting 15 seconds for MySQL to be fully ready before running tests'
-        sleep 15
+        docker compose up -d mysql
+        docker ps
+        echo "Waiting for MySQL to be ready..."
+        #until [ "`docker inspect -f {{.State.Health.Status}} mysql_db`" == "healthy" ]; do
+          sleep 5;
+          #done
+
+    - name: Check running containers
+      run: docker ps
+
+    - name: Check MySQL logs
+      run: docker logs mysql_db
 
         # - name: Test MySQL Connection
         #run: |
@@ -51,7 +52,7 @@ jobs:
     - name: Build
       run: |
         echo 'Clean and package the application'
-        mvn clean package
+        mvn clean package -Dspring.datasource.url=jdbc:mysql://localhost/petclinic
 
     - name: Test
       run: mvn test
