@@ -1,0 +1,11 @@
+apiVersion: tekton.dev/v1beta1
+kind: TaskRun
+metadata:
+  name: build-maven-run
+spec:
+  taskRef:
+    name: build-maven  # This references the task defined in build.yml
+  workspaces:
+    - name: shared-workspace
+      persistentVolumeClaim:
+        claimName: repo-pvc  # Use the PVC for the repository

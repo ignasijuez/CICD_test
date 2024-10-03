@@ -7,6 +7,14 @@ spec:
   workspaces:
     - name: output  # Shared workspace where the repo and init scripts are located
   steps:
+    - name: list-files
+      image: alpine:latest
+      script: |
+        #!/usr/bin/env sh
+        echo "Listing files in workspace/output:"
+        ls -la $(workspaces.output.path)
+        echo "Listing files in workspace/output/tekton/pipeline:"
+        ls -la $(workspaces.output.path)/tekton/pipeline/
     - name: deploy-mysql
       image: bitnami/kubectl:latest
       script: |

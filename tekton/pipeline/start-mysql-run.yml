@@ -8,4 +8,4 @@ spec:
   workspaces:
     - name: shared-workspace
       persistentVolumeClaim:
-        claimName: repo-pvc 
+        claimName: repo-pvc # test

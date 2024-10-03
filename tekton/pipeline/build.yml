@@ -5,9 +5,12 @@ metadata:
 spec:
   workspaces:
     - name: shared-workspace
+      # - name: maven-cache
   steps:
     - name: maven-build
-      image: maven:3.9.9-jdk-22
+      image: maven:3.9.9-eclipse-temurin-22
       script: |
         cd $(workspaces.shared-workspace.path)
+        # Symlink the maven cache directory to the expected ~/.m2 path
+        #ln -s $(workspaces.maven-cache.path) /root/.m2
         mvn clean package
