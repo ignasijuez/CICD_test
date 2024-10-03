@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: maven-cache-pv
+spec:
+  capacity:
+    storage: 1Gi  # Adjust size if necessary
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: "/mnt/data/maven-cache"  # A directory on your Minikube node
