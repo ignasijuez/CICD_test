@@ -7,17 +7,24 @@ spec:
     - name: start-mysql
       image: bitnami/kubectl  # A lightweight image that includes kubectl
       script: |
+        # Debug: check the workspace
+        echo "Workspace path: $(workspaces.shared-workspace.path)"
+        ls -la $(workspaces.shared-workspace.path)/tekton/pipeline
+        echo "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        ls -la /workspace/shared-workspace/src/main/resources/db/mysql
+
         # Apply MySQL deployment and service
-        kubectl apply -f /workspace/tekton/pipeline/mysql-deployment.yml
-        kubectl apply -f /workspace/tekton/pipeline/mysql-service.yml
+        kubectl apply -f $(workspaces.shared-workspace.path)/tekton/pipeline/mysql-deployment.yml
+        kubectl apply -f $(workspaces.shared-workspace.path)/tekton/pipeline/mysql-service.yml
+        
         # Optionally, wait for MySQL to be ready
         until kubectl exec $(kubectl get pod -l app=mysql -o jsonpath="{.items[0].metadata.name}") -- mysqladmin ping --silent; do
           echo "Waiting for MySQL to be ready..."
           sleep 5
         done
-      resources:
-        limits:
-          cpu: "1"
-          memory: "512Mi"
+        #      resources:
+        #limits:
+        #  cpu: "1"
+        #  memory: "512Mi"
   workspaces:
     - name: shared-workspace
