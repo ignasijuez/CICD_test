@@ -5,7 +5,18 @@ metadata:
 spec:
   pipelineRef:
     name: ci-pipeline
+      #  podTemplate:
+      #securityContext:
+      #fsGroup: 65532
   workspaces:
     - name: shared-workspace
-      persistentVolumeClaim:
-        claimName: my-pvc
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+          - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi
+  params:
+    - name: repo-url
+      value: https://github.com/ignasijuez/CICD_test.git

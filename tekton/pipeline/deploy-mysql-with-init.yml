@@ -1,0 +1,21 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: deploy-mysql
+spec:
+  description: Deploy MySQL Database with initialization scripts.
+  workspaces:
+    - name: output  # Shared workspace where the repo and init scripts are located
+  steps:
+    - name: deploy-mysql
+      image: bitnami/kubectl:latest
+      script: |
+        #!/usr/bin/env sh
+        # Apply MySQL deployment with mounted persistent volume and init scripts
+        kubectl apply -f $(workspaces.output.path)/tekton/pipeline/mysql-deployment.yml
+    - name: copy-init-scripts
+      image: bitnami/kubectl:latest
+      script: |
+        #!/usr/bin/env sh
+        # Copy initialization SQL scripts into the MySQL container
+        kubectl cp $(workspaces.output.path)/src/main/resources/db/mysql/. $(kubectl get pod -l app=mysql -o jsonpath="{.items[0].metadata.name}"):/docker-entrypoint-initdb.d/

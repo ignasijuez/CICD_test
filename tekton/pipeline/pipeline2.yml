@@ -3,33 +3,64 @@ kind: Pipeline
 metadata:
   name: ci-pipeline
 spec:
+  description: |
+    This pipeline clones a git repo, then builds db and app
+  params:
+    - name: repo-url
+      type: string
+      description: The git repo URL to clone from
   workspaces:
     - name: shared-workspace
+      description: |
+        This workspace contains the cloned repo files, so they can be read by the next task
   tasks:
     - name: checkout
       taskRef:
-        name: checkout-repo
+        name: git-clone
       workspaces:
-        - name: shared-workspace
+        - name: output
           workspace: shared-workspace
-    - name: start-mysql
+      params:
+        - name: url
+          value: $(params.repo-url)
+    - name: deploy-mysql
+      runAfter: ["checkout"]
       taskRef:
-        name: start-mysql
-    - name: test-mysql-connection
-      taskRef:
-        name: test-mysql-connection
-    - name: build
-      taskRef:
-        name: build-maven
+        name: deploy-mysql
       workspaces:
-        - name: shared-workspace
+        - name: output
           workspace: shared-workspace
-    - name: test
-      taskRef:
-        name: test-maven
-      workspaces:
-        - name: shared-workspace
-          workspace: shared-workspace
-    - name: deploy
-      taskRef:
-        name: deploy-app
+
+            #- name: show-readme
+            #runAfter: ["checkout"]
+            #taskRef:
+            #name: show-readme
+            #workspaces:
+            #- name: output
+            #workspace: shared-workspace
+            
+          #- name: start-mysql
+          #taskRef:
+          #name: start-mysql
+          #    - name: test-mysql-connection
+          #taskRef:
+          #name: test-mysql-connection
+          # - name: build
+          #taskRef:
+          #name: build-maven
+          #workspaces:
+          #- name: shared-workspace
+          #workspace: shared-workspace
+          #- name: test
+          #taskRef:
+          #name: test-maven
+          #workspaces:
+          #- name: shared-workspace
+          #  workspace: shared-workspace
+          #- name: deploy
+          #taskRef:
+          #name: deploy-app
+
+
+
+
