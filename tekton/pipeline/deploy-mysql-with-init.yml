@@ -20,7 +20,7 @@ spec:
       script: |
         #!/usr/bin/env sh
         # Apply MySQL deployment with mounted persistent volume and init scripts
-        kubectl apply -f $(workspaces.output.path)/tekton/pipeline/mysql-deployment.yml
+        kubectl apply -f $(workspaces.output.path)/tekton/pipeline/mysql-deployment-with-init.yml
     - name: copy-init-scripts
       image: bitnami/kubectl:latest
       script: |
