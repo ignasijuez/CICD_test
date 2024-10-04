@@ -31,7 +31,7 @@ spec:
       script: |
         #!/usr/bin/env sh
         # Copy initialization SQL scripts into the MySQL container
-        kubectl cp $(workspaces.output.path)/src/main/resources/db/mysql/. $(kubectl get pod -l app=mysql -o jsonpath="{.items[0].metadata.name}"):/docker-entrypoint-initdb.d/
+        kubectl cp $(workspaces.output.path)/src/main/resources/db/mysql_k8s/. $(kubectl get pod -l app=mysql -o jsonpath="{.items[0].metadata.name}"):/docker-entrypoint-initdb.d/
         echo "Copied init scripts. Waiting 10 seconds for MySQL to recognize the scripts..."
         sleep 10
 
