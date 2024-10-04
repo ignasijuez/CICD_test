@@ -15,12 +15,26 @@ spec:
         ls -la $(workspaces.output.path)
         echo "Listing files in workspace/output/tekton/pipeline:"
         ls -la $(workspaces.output.path)/tekton/pipeline/
+
     - name: deploy-mysql
       image: bitnami/kubectl:latest
       script: |
         #!/usr/bin/env sh
         # Apply MySQL deployment with mounted persistent volume and init scripts
         kubectl apply -f $(workspaces.output.path)/tekton/pipeline/mysql-deployment-with-init.yml
+   
+    - name: wait-for-mysql
+      image: bitnami/kubectl:latest
+      script: |
+        #!/usr/bin/env sh
+        # Wait for the MySQL pod to be ready before proceeding
+        MYSQL_POD=$(kubectl get pod -l app=mysql -o jsonpath='{.items[0].metadata.name}')
+        while [[ $(kubectl get pod $MYSQL_POD -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}') != "True" ]]; do
+          echo "Waiting for MySQL pod to be ready..."
+          sleep 5
+        done
+        echo "MySQL pod is ready."
+
     - name: copy-init-scripts
       image: bitnami/kubectl:latest
       script: |
