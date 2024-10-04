@@ -1,0 +1,16 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: maven-build
+spec:
+  description: |
+    This task runs `mvn clean package` to build the Spring Boot app.
+  workspaces:
+    - name: output  # This is the shared workspace containing the repo files
+  steps:
+    - name: maven-build-step
+      image: maven:3.8.4-jdk-17  # You can customize the Maven and JDK version as needed
+      script: |
+        #!/usr/bin/env sh
+        cd $(workspaces.source.path)  # Navigate to the cloned repo directory
+        mvn clean package  # Run the Maven build

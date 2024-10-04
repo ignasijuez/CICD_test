@@ -30,37 +30,10 @@ spec:
       workspaces:
         - name: output
           workspace: shared-workspace
-
-            #- name: show-readme
-            #runAfter: ["checkout"]
-            #taskRef:
-            #name: show-readme
-            #workspaces:
-            #- name: output
-            #workspace: shared-workspace
-            
-          #- name: start-mysql
-          #taskRef:
-          #name: start-mysql
-          #    - name: test-mysql-connection
-          #taskRef:
-          #name: test-mysql-connection
-          # - name: build
-          #taskRef:
-          #name: build-maven
-          #workspaces:
-          #- name: shared-workspace
-          #workspace: shared-workspace
-          #- name: test
-          #taskRef:
-          #name: test-maven
-          #workspaces:
-          #- name: shared-workspace
-          #  workspace: shared-workspace
-          #- name: deploy
-          #taskRef:
-          #name: deploy-app
-
-
-
-
+    - name: build-app
+      runAfter: ["deploy-mysql"]  # Ensures this runs after MySQL is deployed
+      taskRef:
+        name: maven-build
+      workspaces:
+        - name: source
+          workspace: shared-workspace
