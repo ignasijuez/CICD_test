@@ -35,5 +35,5 @@ spec:
       taskRef:
         name: maven-build
       workspaces:
-        - name: source
+        - name: output
           workspace: shared-workspace
