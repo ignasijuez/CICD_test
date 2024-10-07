@@ -4,13 +4,15 @@ metadata:
   name: maven-build
 spec:
   description: |
-    This task runs `mvn clean package` to build the Spring Boot app.
+    This task runs $mvn clean package to build the Spring Boot app.
   workspaces:
     - name: output  # This is the shared workspace containing the repo files
   steps:
     - name: maven-build-step
-      image: maven:3.8.4-jdk-17  # You can customize the Maven and JDK version as needed
+      image: maven:3.8.7-eclipse-temurin-17
       script: |
         #!/usr/bin/env sh
-        cd $(workspaces.source.path)  # Navigate to the cloned repo directory
+        echo "See files"
+        ls -la
+        cd $(workspaces.output.path)  # Navigate to the cloned repo directory
         mvn clean package  # Run the Maven build
