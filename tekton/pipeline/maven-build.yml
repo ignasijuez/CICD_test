@@ -15,4 +15,5 @@ spec:
         echo "See files"
         ls -la
         cd $(workspaces.output.path)  # Navigate to the cloned repo directory
+        mvn spring-javaformat:apply
         mvn clean package  # Run the Maven build

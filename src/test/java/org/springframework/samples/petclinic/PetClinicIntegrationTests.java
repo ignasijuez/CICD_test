@@ -31,9 +31,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.vet.VetRepository;
 import org.springframework.web.client.RestTemplate;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-//@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, properties = {"spring.profiles.active=mysql"})
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, properties = {spring.profiles.active=mysql})
 
+//@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, properties = {"spring.profiles.active=mysql"})
+//@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, properties = {"spring.profiles.active=mysql"})
+@ActiveProfiles("mysql")
 public class PetClinicIntegrationTests {
 
 	@LocalServerPort
