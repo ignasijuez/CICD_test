@@ -12,8 +12,6 @@ spec:
       image: maven:3.8.7-eclipse-temurin-17
       script: |
         #!/usr/bin/env sh
-        echo "See files"
-        ls -la
         cd $(workspaces.output.path)  # Navigate to the cloned repo directory
         mvn clean
         mvn spring-javaformat:apply
